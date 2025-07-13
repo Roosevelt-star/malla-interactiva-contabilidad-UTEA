@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Contabilidad UTEA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f7f7f7;
+    }
+    h1 {
+      text-align: center;
+    }
+    .ciclo {
+      margin: 20px 0;
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .curso {
+      padding: 5px;
+      margin: 5px 0;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .curso:hover {
+      background: #e0f7fa;
+    }
+    .aprobado {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .bloqueado {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malla de Contabilidad UTEA</h1>
+
+  <div id="malla"></div>
+
+  <script>
+    const cursos = [
+      // Ciclos 1 al 5 (previos)...
+      { codigo: "001996", nombre: "Constitución Política del Perú", ciclo: 1, prerequisitos: [] },
+      { codigo: "001990", nombre: "Doctrina Contable", ciclo: 1, prerequisitos: [] },
+      { codigo: "001989", nombre: "Documentación y Redacción Empresarial", ciclo: 1, prerequisitos: [] },
+      { codigo: "001986", nombre: "Lenguaje y Comunicación", ciclo: 1, prerequisitos: [] },
+      { codigo: "001984", nombre: "Matemática Básica", ciclo: 1, prerequisitos: [] },
+      { codigo: "001987", nombre: "Metodología del Estudio Universitario", ciclo: 1, prerequisitos: [] },
+      { codigo: "001997", nombre: "Contabilidad Básica", ciclo: 2, prerequisitos: ["001990"] },
+      { codigo: "001992", nombre: "Dinámica de Grupos", ciclo: 2, prerequisitos: [] },
+      { codigo: "001995", nombre: "Ecología y Recursos Naturales", ciclo: 2, prerequisitos: [] },
+      { codigo: "001994", nombre: "Economía", ciclo: 2, prerequisitos: [] },
+      { codigo: "001991", nombre: "Filosofía", ciclo: 2, prerequisitos: [] },
+      { codigo: "001993", nombre: "Historia Crítica del Perú", ciclo: 2, prerequisitos: [] },
+      { codigo: "001983", nombre: "Informática", ciclo: 2, prerequisitos: [] },
+      { codigo: "001998", nombre: "Administración y Gestión Empresarial", ciclo: 3, prerequisitos: ["001989"] },
+      { codigo: "002005", nombre: "Defensa e Identidad Nacional", ciclo: 3, prerequisitos: [] },
+      { codigo: "001999", nombre: "Derecho Comercial", ciclo: 3, prerequisitos: ["001996"] },
+      { codigo: "002000", nombre: "Derecho Laboral", ciclo: 3, prerequisitos: ["001996"] },
+      { codigo: "002004", nombre: "Derecho Tributario Empresarial", ciclo: 3, prerequisitos: ["001997"] },
+      { codigo: "002003", nombre: "Dinámica del Plan Contable", ciclo: 3, prerequisitos: ["001997"] },
+      { codigo: "002002", nombre: "Emprendimiento Empresarial", ciclo: 3, prerequisitos: ["001994"] },
+      { codigo: "002001", nombre: "Microeconomía", ciclo: 3, prerequisitos: ["001994"] },
+      { codigo: "002006", nombre: "Administración y Gestión de Talento Humano", ciclo: 4, prerequisitos: ["001998"] },
+      { codigo: "002010", nombre: "Contabilidad Financiera", ciclo: 4, prerequisitos: ["002003"] },
+      { codigo: "002009", nombre: "Estudio y Aplicación de las NIIF I", ciclo: 4, prerequisitos: ["002003"] },
+      { codigo: "002008", nombre: "Macroeconomía", ciclo: 4, prerequisitos: ["002001"] },
+      { codigo: "002007", nombre: "Matemática Empresarial", ciclo: 4, prerequisitos: ["002001"] },
+      { codigo: "002011", nombre: "Tributos I Personas Naturales", ciclo: 4, prerequisitos: ["002004"] },
+      { codigo: "002015", nombre: "Contabilidad Intermedia", ciclo: 5, prerequisitos: ["002010"] },
+      { codigo: "002013", nombre: "Estadística Empresarial", ciclo: 5, prerequisitos: ["002007"] },
+      { codigo: "002014", nombre: "Estudio y Aplicación de las NIIF II", ciclo: 5, prerequisitos: ["002009"] },
+      { codigo: "002012", nombre: "Gestión de Costos I", ciclo: 5, prerequisitos: ["002006"] },
+      { codigo: "002017", nombre: "Inglés I", ciclo: 5, prerequisitos: [] },
+      { codigo: "002016", nombre: "Tributos II Personas Jurídicas", ciclo: 5, prerequisitos: ["002011"] },
+      // Ciclo 6
+      { codigo: "002018", nombre: "Contabilidad Avanzada", ciclo: 6, prerequisitos: ["002015"] },
+      { codigo: "002020", nombre: "Gestión de Costos II", ciclo: 6, prerequisitos: ["002012"] },
+      { codigo: "002022", nombre: "Gestión Financiera I", ciclo: 6, prerequisitos: ["002015"] },
+      { codigo: "002019", nombre: "Inglés II", ciclo: 6, prerequisitos: ["002017"] },
+      { codigo: "002021", nombre: "Práctica Pre Profesional I", ciclo: 6, prerequisitos: ["002015"] },
+      { codigo: "002023", nombre: "Taller de NIIF III", ciclo: 6, prerequisitos: ["002014"] },
+      // Ciclo 7
+      { codigo: "002024", nombre: "Auditoría I", ciclo: 7, prerequisitos: ["002018"] },
+      { codigo: "002025", nombre: "Contabilidad Gubernamental", ciclo: 7, prerequisitos: ["002018"] },
+      { codigo: "002027", nombre: "Gestión Financiera II", ciclo: 7, prerequisitos: ["002022"] },
+      { codigo: "002029", nombre: "Inglés III", ciclo: 7, prerequisitos: ["002019"] },
+      { codigo: "002026", nombre: "Investigación de Mercados", ciclo: 7, prerequisitos: ["002013"] },
+      { codigo: "002028", nombre: "Taller de Especialización Contable I", ciclo: 7, prerequisitos: ["002018"] },
+      // Ciclo 8
+      { codigo: "002030", nombre: "Auditoría II", ciclo: 8, prerequisitos: ["002024"] },
+      { codigo: "002031", nombre: "Ética Profesional y Ciudadanía", ciclo: 8, prerequisitos: [] },
+      { codigo: "002033", nombre: "Inglés IV", ciclo: 8, prerequisitos: ["002029"] },
+      { codigo: "002034", nombre: "Práctica Pre Profesional II", ciclo: 8, prerequisitos: ["002021"] },
+      { codigo: "002032", nombre: "Seminario de Investigación I", ciclo: 8, prerequisitos: ["002026"] },
+      { codigo: "002035", nombre: "Taller de Especialización Contable II", ciclo: 8, prerequisitos: ["002028"] },
+      // Ciclo 9
+      { codigo: "002036", nombre: "Auditoría Especial", ciclo: 9, prerequisitos: ["002030"] },
+      { codigo: "002037", nombre: "Comercio Exterior", ciclo: 9, prerequisitos: [] },
+      { codigo: "002038", nombre: "Formulación y Evaluación de Proyectos", ciclo: 9, prerequisitos: [] },
+      { codigo: "002039", nombre: "Gestión Pública", ciclo: 9, prerequisitos: ["002025"] },
+      { codigo: "002040", nombre: "Seminario de Investigación II", ciclo: 9, prerequisitos: ["002032"] },
+      // Ciclo 10
+      { codigo: "002041", nombre: "Gestión de Calidad", ciclo: 10, prerequisitos: [] },
+      { codigo: "002042", nombre: "Gestión de Riesgos", ciclo: 10, prerequisitos: [] },
+      { codigo: "002043", nombre: "Simulación Empresarial", ciclo: 10, prerequisitos: [] },
+      { codigo: "002044", nombre: "Trabajo de Investigación para la Titulación", ciclo: 10, prerequisitos: ["002040"] }
+    ];
+
+    const estadoCursos = {}; // { codigo: true | false }
+
+    function crearMalla() {
+      const contenedor = document.getElementById("malla");
+      contenedor.innerHTML = "";
+
+      const ciclos = [...new Set(cursos.map(c => c.ciclo))].sort((a,b) => a - b);
+
+      ciclos.forEach(ciclo => {
+        const divCiclo = document.createElement("div");
+        divCiclo.className = "ciclo";
+        divCiclo.innerHTML = `<h3>Ciclo ${ciclo}</h3>`;
+
+        cursos.filter(c => c.ciclo === ciclo).forEach(curso => {
+          const divCurso = document.createElement("div");
+          divCurso.className = "curso";
+          divCurso.textContent = curso.nombre;
+          divCurso.dataset.codigo = curso.codigo;
+
+          actualizarEstadoCurso(divCurso, curso);
+
+          divCurso.addEventListener("click", () => {
+            estadoCursos[curso.codigo] = !estadoCursos[curso.codigo];
+            crearMalla(); // Recargar malla con nuevos estados
+          });
+
+          divCiclo.appendChild(divCurso);
+        });
+
+        contenedor.appendChild(divCiclo);
+      });
+    }
+
+    function actualizarEstadoCurso(div, curso) {
+      const aprobado = estadoCursos[curso.codigo];
+      const habilitado = curso.prerequisitos.every(pre => estadoCursos[pre]);
+
+      if (aprobado) {
+        div.classList.add("aprobado");
+      } else {
+        div.classList.remove("aprobado");
+      }
+
+      if (!habilitado && curso.prerequisitos.length > 0) {
+        div.classList.add("bloqueado");
+      } else {
+        div.classList.remove("bloqueado");
+      }
+    }
+
+    crearMalla();
+  </script>
+</body>
+</html>
